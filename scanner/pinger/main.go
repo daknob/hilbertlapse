@@ -100,7 +100,9 @@ func main() {
 			 * goroutines are running and no more.
 			 */
 			guard <- struct{}{}
-			go pingAndWrite(fmt.Sprintf("%d.%d.%d.%d", *ca, *cb, i, j), i, j)
+
+			/* Run the ping goroutine */
+			go pingAndWrite(fmt.Sprintf("%d.%d.%d.%d", *ca, *cb, i, j))
 		}
 	}
 
@@ -122,11 +124,10 @@ func main() {
 }
 
 /* pingAndWrite is a function that accepts an IPv4 Address addr, as a string,
- * as well as the desired output position to the CSV file (i,j) and will then
- * run a ping scan against the desired IP Address, and write the results to the
- * CSV file, setting positions i and j to the relevant CSV fields.
+ * and will then run a ping scan against the desired IP Address, and write the
+ * results to the CSV file.
  */
-func pingAndWrite(addr string, i, j int) {
+func pingAndWrite(addr string) {
 	/* Create a new pinger object */
 	p, err := ping.NewPinger(addr)
 	if err != nil {
