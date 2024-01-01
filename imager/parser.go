@@ -25,31 +25,31 @@ func NewScanLine(line string) (ScanLine, error) {
 		return ScanLine{}, fmt.Errorf("parsed fields are not 5")
 	}
 
-	// Status
+	/* Status */
 	if fields[0] == "open" {
 		ret.Status = open
 	} else {
 		ret.Status = closed
 	}
 
-	// Protocol
+	/* Protocol */
 	ret.Protocol = fields[1]
 
-	// Port
+	/* Port */
 	i, err := strconv.Atoi(fields[2])
 	if err != nil {
 		return ScanLine{}, err
 	}
 	ret.Port = uint16(i)
 
-	// Address
+	/* Address */
 	paddr, err := netip.ParseAddr(fields[3])
 	if err != nil {
 		return ScanLine{}, err
 	}
 	ret.Address = paddr
 
-	// Timestamp
+	/* Timestamp */
 	tsp, err := strconv.Atoi(fields[4])
 	if err != nil {
 		return ScanLine{}, err

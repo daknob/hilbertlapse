@@ -122,36 +122,36 @@ func main() {
 
 	inscan := bufio.NewScanner(cont)
 	for inscan.Scan() {
-		// Ignore comments
+		/* Ignore comments */
 		if strings.HasPrefix(inscan.Text(), CommentChar) {
 			continue
 		}
 
-		// Parse the line
+		/* Parse the line */
 		rec, err := NewScanLine(inscan.Text())
 		if err != nil {
 			slog.Error("failed to parse output line", "error", err)
 			continue
 		}
 
-		// Ignore addresses not contained in the target range
+		/* Ignore addresses not contained in the target range */
 		if !prefix.Contains(rec.Address) {
 			continue
 		}
 
-		// Calculate the position within the range
+		/* Calculate the position within the range */
 		foundAs4 := rec.Address.As4()
 		foundAsInt := big.NewInt(0).SetBytes(foundAs4[:])
 		index := foundAsInt.Sub(foundAsInt, rangeStart).Int64()
 
-		// Map to an X,Y in the hilbert curve
+		/* Map to an X,Y in the hilbert curve */
 		x, y, err := hilb.Map(int(index))
 		if err != nil {
 			slog.Error("failed to map address to hilbert curve", "line", inscan.Text(), "parsed", rec, "index", index, "error", err)
 			os.Exit(1)
 		}
 
-		// Set the image color
+		/* Set the image color */
 		if rec.Status == open {
 			resultImage.Set(x, y, color.RGBA{50, 200, 50, 255})
 		}
