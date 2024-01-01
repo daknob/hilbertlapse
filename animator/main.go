@@ -24,14 +24,13 @@ import (
 	"image/draw"
 	"image/gif"
 	"image/png"
+	"log/slog"
 	"os"
 	"strings"
-
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	logrus.Infof("Started animator...")
+	slog.Info("starting animator...")
 
 	/* The file that contains a list of all PNGs to be animated */
 	srcList := flag.String("s", "/dev/stdin", "File to read list of PNG names")
@@ -41,10 +40,11 @@ func main() {
 	flag.Parse()
 
 	/* Read the file with the list of all PNG names */
-	logrus.Infof("Reading input file list from '%s'...", *srcList)
+	slog.Info("reading input file list", "file", *srcList)
 	fl, err := os.ReadFile(*srcList)
 	if err != nil {
-		logrus.Fatalf("Failed to read file list from '%s': %v", *srcList, err)
+		slog.Error("failed to read file list", "file", *srcList, "error", err)
+		os.Exit(1)
 	}
 
 	/* Split the file names on the new line */
@@ -53,7 +53,7 @@ func main() {
 	files = files[:len(files)-1]
 
 	/* Print the amount of loaded files to animate */
-	logrus.Infof("Loaded %d files", len(files))
+	slog.Info("loaded files", "count", len(files))
 
 	/* Create a GIF image in memory */
 	outputGIF := &gif.GIF{}
@@ -64,19 +64,19 @@ func main() {
 		inPNG, err := os.Open(fn)
 		if err != nil {
 			/* We ignore all files that cannot be opened */
-			logrus.Warnf("Could not open '%s': %v", fn, err)
+			slog.Warn("could not open file", "file", fn, "error", err)
 			continue
 		}
 		/* decode the PNG in it, */
 		inIMG, err := png.Decode(inPNG)
 		if err != nil {
 			/* We ignore all non-PNG files */
-			logrus.Warnf("Could not read '%s' as PNG: %v", fn, err)
+			slog.Warn("could not read PNG file", "file", fn, "error", err)
 			continue
 		}
 
 		/* Convert the PNG to GIF */
-		logrus.Infof("Converting '%s' to GIF...", fn)
+		slog.Info("converting file to GIF", "file", fn)
 		pIMG := image.NewPaletted(inIMG.Bounds(), palette.Plan9)
 		draw.Draw(pIMG, pIMG.Rect, inIMG, inIMG.Bounds().Min, draw.Over)
 
@@ -87,26 +87,25 @@ func main() {
 		outputGIF.Delay = append(outputGIF.Delay, 0)
 	}
 
-	logrus.Infof("Done with encoding. Writting GIF...")
+	slog.Info("encoding complete")
+	slog.Info("writing GIF...")
 
 	/* Open the GIF file for writting, create if necessary */
 	out, err := os.OpenFile(*outFile, os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		logrus.Fatalf(
-			"Failed to open '%s' for writting output: %v",
-			*outFile, err,
-		)
+		slog.Error("failed to open file for writing output", "file", *outFile, "error", err)
+		os.Exit(1)
 	}
 
 	/* Encode the GIF, and write it to file */
 	err = gif.EncodeAll(out, outputGIF)
 	if err != nil {
-		logrus.Fatalf("Failed to encode output GIF: %v", err)
+		slog.Error("failed to encode output GIF", "error", err)
+		os.Exit(1)
 	}
 
 	/* Close the output GIF file */
 	out.Close()
 
-	logrus.Infof("Write successful. Exiting.")
-
+	slog.Info("done")
 }
