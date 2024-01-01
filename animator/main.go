@@ -24,7 +24,6 @@ import (
 	"image/draw"
 	"image/gif"
 	"image/png"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -43,7 +42,7 @@ func main() {
 
 	/* Read the file with the list of all PNG names */
 	logrus.Infof("Reading input file list from '%s'...", *srcList)
-	fl, err := ioutil.ReadFile(*srcList)
+	fl, err := os.ReadFile(*srcList)
 	if err != nil {
 		logrus.Fatalf("Failed to read file list from '%s': %v", *srcList, err)
 	}
