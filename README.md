@@ -6,9 +6,9 @@ single animated GIF.
 The pipeline used by hilbertlapse is the following:
 
 ```
-+----+     +-----+     +-------+
-|SCAN+---->+IMAGE+---->+ANIMATE|
-+----+     +-----+     +-------+
++------+     +-------+     +---------+
+| SCAN +---->+ IMAGE +---->+ ANIMATE |
++------+     +-------+     +---------+
 ```
 
 Therefore, the entire project is not a single binary that runs and outputs the
