@@ -22,7 +22,6 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -43,7 +42,7 @@ func main() {
 
 	/* Open the CSV file */
 	logrus.Infof("Loading file from %s...", *inFile)
-	cont, err := ioutil.ReadFile(*inFile)
+	cont, err := os.ReadFile(*inFile)
 	if err != nil {
 		logrus.Fatalf("Could not read from %s...: %v", *inFile, err)
 	}
