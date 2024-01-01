@@ -27,44 +27,49 @@ in a researcher laptop.
 The three steps of hilbertlapse are described below:
 
 ## Scanner
+
 The scanner is a utility that performs some sort of scan on a set of IP
-Addresses. The current implementation includes `pinger`, which runs a ping
-check, and outputs whether the host at the other end was responding to pings,
-or not.
+Addresses. The current recommended way to achieve this is using
+[masscan](https://github.com/robertdavidgraham/masscan), which works on many
+operating systems, is one of the fastest pieces of software, and it's available
+in many repositories.
 
-The output of this phase is a CSV file, with the following format:
+The recommended way to run `masscan` is:
 
 ```
-IPv4Address,UpOrDown,PacketsSent,PacketsReceived,AvgRTT
+/usr/bin/masscan --ping --rate=256 -oL "scans/$(date +%Y/%m/%d/%H:%M)" 193.5.16.0/22 2>/dev/null > /dev/null
 ```
 
-The CSV file contains no header. The fields required are:
+You can of course adjust the rate, do sharding, etc. as long as you use the
+list (`-oL`) output of the tool and you have the results available in a single
+file.  This would also work with port scans, but ping is used above as an
+example.
 
-### IPv4Address
-The scan target's IPv4 Address. This is a string. Example: 193.5.16.0
+The above uses the `date` command to name the output file so it's safe to run
+in a `cron` job e.g. every hour, producing a unique file per scan. In this
+example, you'd have a `scans` directory, and within it one folder per year,
+containing one folder per month, containing one folder per day, containing all
+the hourly scans. Be sure to `mkdir -p` the folder first!
 
-### UpOrDown
-The string `up` if the host should appear as `up` or anything else / `down` if
-the host should appear as `down`. The definition depends on the scanner.
+An example output file would be:
 
-Any other fields MAY be included by the scanner, but are ignored by the next
-component, the `imager`. In this example, Packets Sent, Received, and the
-Average RTT in ms is shown. Some `imager`s MAY require additional data, or MAY
-ignore the two defined above.
+```
+open icmp 0 193.5.16.0 1703671357
+open icmp 0 193.5.16.1 1703671358
+open icmp 0 193.5.16.80 1703671358
+open icmp 0 193.5.16.89 1703671358
+```
 
 ## Imager
-The `imager` is a utility that accepts a CSV from a Scanner, and then creates a
-PNG, based on the details included in the input CSV. The `imager` included in
-the current repository will take a scan of a /16 network and create a 256x256
-PNG that will have each `up` value set to `(50,200,50,255)` and each `down` to
-the color `(50,50,50,255)`. You may provide a smaller subnet that has been
-scanned, such as a /17, or anything else, and for any pixel that has not been
-explicitly marked as `up` or `down`, the color will be set to black.
 
-The mapping of IPv4 Addresses to `(X,Y)` coordinates on the PNG file is done on
-the `/24` and `/32` parts of the IP Address (the third and fourth octet
-respectively), sent via a [Hilbert
-Curve](https://en.wikipedia.org/wiki/Hilbert_curve) map, of size 256x256, to
+The `imager` is a utility that accepts a file from masscan, and then creates a
+PNG, based on the details included in the input. The `imager` included in the
+current repository will take a scan of a network and create a PNG that will
+have each `up` value set to `(50,200,50,255)` and each `down` to the color
+`(50,50,50,255)`.
+
+The mapping of IPv4 Addresses to `(X,Y)` coordinates on the PNG file is done
+using a [Hilbert Curve](https://en.wikipedia.org/wiki/Hilbert_curve) map, to
 add subnet locality.
 
 An example output of `imager` is this:
