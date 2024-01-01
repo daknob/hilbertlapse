@@ -16,7 +16,7 @@ desired results, but instead three binaries, or at least three steps, which are
 connected either by a different program, or simple bash scripts and pipes.
 
 This is done to add flexibility to the entire process, so any binary in the
-pipeline can be changed with any other, interchangeably, but also to make it
+pipeline can be exchanged with any other, interchangeably, but also to make it
 easier to develop and prototype, as this was created for a [blog
 post](https://blog.daknob.net/mapping-the-greek-inet-oct-19/). In that blog
 post you can find more information about the project. This flexibility now
@@ -65,8 +65,8 @@ open icmp 0 193.5.16.89 1703671358
 The `imager` is a utility that accepts a file from masscan, and then creates a
 PNG, based on the details included in the input. The `imager` included in the
 current repository will take a scan of a network and create a PNG that will
-have each `up` value set to `(50,200,50,255)` and each `down` to the color
-`(50,50,50,255)`.
+have each `up` value set to `#32c832` and each `down` to the color `#323232`.
+The colors are of course configurable.
 
 The mapping of IPv4 Addresses to `(X,Y)` coordinates on the PNG file is done
 using a [Hilbert Curve](https://en.wikipedia.org/wiki/Hilbert_curve) map, to
