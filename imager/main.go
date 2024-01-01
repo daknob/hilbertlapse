@@ -21,7 +21,6 @@ import (
 	"bufio"
 	"flag"
 	"image"
-	"image/color"
 	"image/png"
 	"log/slog"
 	"math"
@@ -49,6 +48,10 @@ func main() {
 
 	/* Accept range to image, default to 193.5.16.0/22 */
 	imageRange := flag.String("r", "193.5.16.0/22", "Output range (CIDR must be even)")
+
+	/* Colors used for up and down hosts */
+	upColor := flag.String("u", "#32c832", "Color used for hosts that are up")
+	downColor := flag.String("d", "#323232", "Color used for hosts that are down")
 	flag.Parse()
 
 	/* Open the file */
@@ -102,7 +105,7 @@ func main() {
 	/* Fill image with offline color */
 	for i := 0; i < rangeSqrt; i++ {
 		for j := 0; j < rangeSqrt; j++ {
-			resultImage.Set(i, j, color.RGBA{50, 50, 50, 255})
+			resultImage.Set(i, j, parseColor(*downColor))
 		}
 	}
 
@@ -153,7 +156,7 @@ func main() {
 
 		/* Set the image color */
 		if rec.Status == open {
-			resultImage.Set(x, y, color.RGBA{50, 200, 50, 255})
+			resultImage.Set(x, y, parseColor(*upColor))
 		}
 	}
 
