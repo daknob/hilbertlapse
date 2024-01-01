@@ -22,16 +22,16 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/google/hilbert"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	logrus.Infof("Starting imager...")
+	slog.Info("starting imager...")
 
 	/* Accept the CSV file to image, default from STDIN */
 	inFile := flag.String("i", "/dev/stdin", "Input CSV File")
@@ -41,15 +41,16 @@ func main() {
 	flag.Parse()
 
 	/* Open the CSV file */
-	logrus.Infof("Loading file from %s...", *inFile)
+	slog.Info("loading file", "name", *inFile)
 	cont, err := os.ReadFile(*inFile)
 	if err != nil {
-		logrus.Fatalf("Could not read from %s...: %v", *inFile, err)
+		slog.Error("could not read file", "name", *inFile, "error", err)
+		os.Exit(1)
 	}
-	logrus.Infof("File loaded!")
+	slog.Info("file loaded", "name", *inFile)
 
 	/* Create a new PNG image in memory */
-	logrus.Infof("Creating image file...")
+	slog.Info("creating image file...")
 	resultImage := image.NewRGBA(
 		image.Rectangle{
 			image.Point{0, 0},
@@ -60,16 +61,15 @@ func main() {
 	/* Create the output file, and open it for writting */
 	resultFile, err := os.Create(*outFile)
 	if err != nil {
-		logrus.Fatalf(
-			"Failed to create image file (%s) for writting output: %v",
-			*outFile, err,
-		)
+		slog.Error("failed to create image file for writing", "name", *outFile, "error", err)
+		os.Exit(1)
 	}
 
 	/* Create a new Hilbert map, 256x256 to map the addresses in */
 	hilb, err := hilbert.NewHilbert(256)
 	if err != nil {
-		logrus.Fatalf("Failed to create Hilbert Map: %v", err)
+		slog.Error("failed to create hilbert curve map", "error", err)
+		os.Exit(1)
 	}
 
 	/* Split the CSV file, line by line, into a slice */
@@ -95,11 +95,13 @@ func main() {
 			 * If there's an error, exit. Feel free to modify code accordingly
 			 * to instead skip the line, using continue.
 			 */
-			logrus.Fatalf("Failed to convert string to int: %v", err)
+			slog.Error("failed to convert string to int", "error", err)
+			os.Exit(1)
 		}
 		yint, err := strconv.Atoi(y)
 		if err != nil {
-			logrus.Fatalf("Failed to convert string to int: %v", err)
+			slog.Error("failed to convert string to int", "error", err)
+			os.Exit(1)
 		}
 
 		/*
@@ -109,7 +111,8 @@ func main() {
 		actx, acty, err := hilb.Map(xint*256 + yint)
 		if err != nil {
 			/* Exit on error, feel free to modify code as before */
-			logrus.Fatalf("Failed to hilbert-map point: %v", err)
+			slog.Error("failed to map point to hilbert curve", "error", err)
+			os.Exit(1)
 		}
 
 		/* Check the CSV field and determine if the pixel should be "on" */
@@ -128,7 +131,7 @@ func main() {
 	}
 
 	/* Write the PNG image to the output file */
-	logrus.Infof("Writting PNG to file...")
+	slog.Info("writing PNG to file...")
 	png.Encode(resultFile, resultImage)
-	logrus.Infof("Done!")
+	slog.Info("done")
 }
