@@ -124,6 +124,10 @@ An example output is this:
 ![Animator example
 output](https://blog.daknob.net/content/images/2020/01/03/36C3.gif)
 
+For added features like text labels, you can see this here:
+
+![Animator Advanced Example](https://daknob.net/dist/37c3/37c3.gif)
+
 # Examples
 
 You can find more information and more real world examples in my [main blog
