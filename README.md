@@ -82,23 +82,23 @@ The supported command line arguments are:
 
 ### I/O
 
-`-i` : The file to read the scanner output from (default `stdin`)
-`-o` : The file to write the final PNG to (default `stdout`)
+* `-i` : The file to read the scanner output from (default `stdin`)
+* `-o` : The file to write the final PNG to (default `stdout`)
 
 ### Network
 
-`-r` : The IP Range to focus on (default `193.5.16.0/22`)
+* `-r` : The IP Range to focus on (default `193.5.16.0/22`)
 
 ### Colors
 
-`-u` : The color to paint hosts that are up (default `#32c832`)
-`-d` : The color to paint hosts that are down (default `#323232`)
+* `-u` : The color to paint hosts that are up (default `#32c832`)
+* `-d` : The color to paint hosts that are down (default `#323232`)
 
 ### Text Labels
 
-`-l` : The text you want to add to the image as a label (default ``)
-`-c` : The color of the text label you want (default `#cdcdcd`)
-`-p` : The position of the label, top/bottom + left/right (default `bottom-right`)
+* `-l` : The text you want to add to the image as a label (default ``)
+* `-c` : The color of the text label you want (default `#cdcdcd`)
+* `-p` : The position of the label, top/bottom + left/right (default `bottom-right`)
 
 ## Animator
 
