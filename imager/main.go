@@ -30,6 +30,8 @@ import (
 	"strings"
 
 	"github.com/google/hilbert"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
 )
 
 const (
@@ -52,6 +54,12 @@ func main() {
 	/* Colors used for up and down hosts */
 	upColor := flag.String("u", "#32c832", "Color used for hosts that are up")
 	downColor := flag.String("d", "#323232", "Color used for hosts that are down")
+
+	/* Add text to the image */
+	imageLabelText := flag.String("l", "", "Add text as image label")
+	imageLabelColor := flag.String("c", "#cdcdcd", "Color used for the image text label")
+	imageLabelPosition := flag.String("p", "bottom-right", "Text label position (top/bottom + left/right)")
+
 	flag.Parse()
 
 	/* Open the file */
@@ -163,6 +171,15 @@ func main() {
 	if err := inscan.Err(); err != nil {
 		slog.Error("failed to scan input file", "error", err)
 	}
+
+	/* Add text to image */
+	labelDrawer := &font.Drawer{
+		Dst:  resultImage,
+		Src:  image.NewUniform(parseColor(*imageLabelColor)),
+		Face: basicfont.Face7x13,
+		Dot:  getTextPoint(*imageLabelPosition, *imageLabelText, rangeSqrt),
+	}
+	labelDrawer.DrawString(*imageLabelText)
 
 	/* Write the PNG image to the output file */
 	slog.Info("writing PNG to file...")
