@@ -2,3 +2,5 @@ github.com/google/hilbert v0.0.0-20181122061418-320f2e35a565 h1:KBAlCAY6eLC44FiE
 github.com/google/hilbert v0.0.0-20181122061418-320f2e35a565/go.mod h1:xn6EodFfRzV6j8NXQRPjngeHWlrpOrsZPKuuLRThU1k=
 golang.org/x/image v0.38.0 h1:5l+q+Y9JDC7mBOMjo4/aPhMDcxEptsX+Tt3GgRQRPuE=
 golang.org/x/image v0.38.0/go.mod h1:/3f6vaXC+6CEanU4KJxbcUZyEePbyKbaLoDOe4ehFYY=
+golang.org/x/image v0.44.0 h1:+tDekMZED9+LrtB3G5xzRggpVh9CARjZqROla3R3R+I=
+golang.org/x/image v0.44.0/go.mod h1:V8K3KE9KKKE+pLpQDOeN18w9oacNSvy1tDOirTu4xtY=
